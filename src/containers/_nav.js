@@ -14,6 +14,22 @@ export default [
       },
       {
         _name: 'CSidebarNavTitle',
+        _children: ['Setting']
+      },
+      {
+        _name: 'CSidebarNavItem',
+        name: 'Hotel',
+        to: '/theme/colors',
+        icon: 'cil-pencil'
+      },
+      {
+        _name: 'CSidebarNavItem',
+        name: 'Room',
+        to: '/theme/colors',
+        icon: 'cil-layers'
+      },
+      {
+        _name: 'CSidebarNavTitle',
         _children: ['Theme']
       },
       {
