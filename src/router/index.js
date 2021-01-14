@@ -57,6 +57,12 @@ const Register = () => import('@/views/pages/Register')
 const Users = () => import('@/views/users/Users')
 const User = () => import('@/views/users/User')
 
+// Views - Setting
+const Hotels = () => import('@/views/setting/Hotels')
+const Rooms = () => import('@/views/setting/Rooms')
+const Hotel = () => import('@/views/setting/Hotel')
+const Room = () => import('@/views/setting/Room')
+
 Vue.use(Router)
 
 export default new Router({
@@ -78,6 +84,36 @@ function configRoutes () {
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard
+        },
+        {
+          path: 'setting',
+          redirect: '/setting/hotels',
+          name: 'Setting',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'hotels',
+              name: 'Hotels',
+              component: Hotels,
+            },
+            {
+              path: 'rooms',
+              name: 'Rooms',
+              component: Rooms,
+            },
+            {
+              path: 'hotels/:id',
+              name: 'Hotel',
+              component: Hotel,
+            },
+            {
+              path: 'rooms/:id',
+              name: 'Room',
+              component: Room,
+            }
+          ]
         },
         {
           path: 'theme',

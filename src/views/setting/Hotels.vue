@@ -1,0 +1,81 @@
+<template>
+  <div>
+    <div class="row mb-3">
+      <h2 class="text-center flex-grow-1 text-upppercase">Manage Hotels</h2>
+      <b-button variant="outline-info" @click="onAddHotel">Add a new hotel</b-button>
+    </div>
+    <b-table :items="hotels" :fields="fields" striped responsive="sm">
+      <template #cell(index)="data">
+        {{ data.index + 1 }}
+      </template>
+      <template #cell(services)="data">
+        <div v-for="(service, index) in data.value.split(',')" :key="index">
+          {{ service }}
+        </div>
+      </template>
+      <template #cell(freeServices)="data">
+        <div v-for="(service, index) in data.value.split(',')" :key="index">
+          {{ service }}
+        </div>
+      </template>
+      <template #cell(price)="data">
+        {{ parseInt(data.value) }}
+      </template>
+      <template #cell(isSale)="data">
+        <b-form-checkbox switch v-model="data.value" disabled></b-form-checkbox>
+      </template>
+      <template #cell(srcImg)="data">
+        <b-img :src="data.value" fluid alt="Responsive image" height="200" width="200"></b-img>
+      </template>
+      <template #cell(actions)="data">
+        <div>
+          <b-button variant="outline-primary" class="mr-1" @click="onEditHotel(data.item.id)">Edit</b-button>
+          <b-button variant="outline-danger" @click="onDeleteHotel(data.item.id)">Delete</b-button>
+        </div>
+      </template>
+    </b-table>
+  </div>
+</template>
+
+<script>
+import HotelService from '../../services/hotelService';
+
+export default {
+  name: 'Hotels',
+  data() {
+    return {
+      hotelService: new HotelService(),
+      hotels: [],
+      fields: [
+          'index',
+          { key: 'name', label: 'Name', sortable: true },
+          { key: 'address', label: 'Address', sortable: true },
+          { key: 'services', label: 'Services', sortable: true },
+          { key: 'freeServices', label: 'Free Services', sortable: true },
+          { key: 'srcImg', label: 'Image', sortable: true },
+          { key: 'price', label: 'Price (vnd)', sortable: true },
+          { key: 'isSale', label: 'On Sale', sortable: true },
+          { key: 'star', label: 'Star', sortable: true },
+          { key: 'actions', label: ''}
+        ],
+
+
+      };
+    },
+    async mounted() {
+        this.hotels = await this.hotelService.getAllHotels();
+        console.log(this.hotels);
+    },
+    methods: {
+      onEditHotel(hotelId){
+        this.$router.push({ name: 'Hotel', params: { id: hotelId } });
+      },
+      onDeleteHotel(hotelId){
+        console.log('To do Delete hotel ' + hotelId);
+      },
+      onAddHotel(){
+        this.$router.push({ name: 'Hotel', params: { id: 0 } });
+      }
+    }
+};
+</script>

@@ -19,13 +19,13 @@ export default [
       {
         _name: 'CSidebarNavItem',
         name: 'Hotel',
-        to: '/theme/colors',
-        icon: 'cil-pencil'
+        to: '/setting/hotels',
+        icon: 'cil-calculator'
       },
       {
         _name: 'CSidebarNavItem',
         name: 'Room',
-        to: '/theme/colors',
+        to: '/setting/rooms',
         icon: 'cil-layers'
       },
       {
