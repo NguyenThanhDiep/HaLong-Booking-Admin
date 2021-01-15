@@ -3,9 +3,9 @@ export const environment = {
         BaseUrl: "http://localhost:57223/",
         BaseUrlSuffix: "",
 
-        GetAllHotels: "hotels/",
+        AllHotels: "hotels/",
         GetHotelsByName: "hotels/?searchString={searchString}",
-        GetHotelById: "hotels/{hotelId}/",
-        GetRoomById: "rooms/{roomId}/"
+        HotelById: "hotels/{hotelId}/",
+        RoomById: "rooms/{roomId}/"
     }
 };

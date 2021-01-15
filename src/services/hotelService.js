@@ -7,7 +7,7 @@ export default class HotelService {
     }
 
     async getAllHotels() {
-        return await this.httpService.get(environment.ApiHotel.GetAllHotels);
+        return await this.httpService.get(environment.ApiHotel.AllHotels);
     }
 
     async getHotelsByName(searchString) {
@@ -15,10 +15,22 @@ export default class HotelService {
     }
 
     async getHotelById(hotelId) {
-        return await this.httpService.get(environment.ApiHotel.GetHotelById.replace('{hotelId}', hotelId));
+        return await this.httpService.get(environment.ApiHotel.HotelById.replace('{hotelId}', hotelId));
+    }
+
+    async createHotel(hotelModel) {
+        return await this.httpService.post(environment.ApiHotel.AllHotels, hotelModel);
+    }
+
+    async updateHotel(hotelModel) {
+        return await this.httpService.put(environment.ApiHotel.HotelById.replace('{hotelId}', hotelModel.id), hotelModel);
+    }
+
+    async deleteHotel(hotelId) {
+        return await this.httpService.delete(environment.ApiHotel.HotelById.replace('{hotelId}', hotelId));
     }
 
     async getRoomById(roomId) {
-        return await this.httpService.get(environment.ApiHotel.GetRoomById.replace('{roomId}', roomId));
+        return await this.httpService.get(environment.ApiHotel.RoomById.replace('{roomId}', roomId));
     }
 }

@@ -64,14 +64,21 @@ export default {
     },
     async mounted() {
         this.hotels = await this.hotelService.getAllHotels();
-        console.log(this.hotels);
     },
     methods: {
       onEditHotel(hotelId){
         this.$router.push({ name: 'Hotel', params: { id: hotelId } });
       },
-      onDeleteHotel(hotelId){
-        console.log('To do Delete hotel ' + hotelId);
+      async onDeleteHotel(hotelId){
+        this.$root['loading'] = true;
+        await this.hotelService.deleteHotel(hotelId);
+        this.$bvToast.toast('Delete hotel successfully!', {
+                title: 'Success',
+                variant: "success",
+                solid: true
+            });
+        this.hotels = await this.hotelService.getAllHotels();
+        this.$root['loading'] = false;
       },
       onAddHotel(){
         this.$router.push({ name: 'Hotel', params: { id: 0 } });

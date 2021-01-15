@@ -1,10 +1,18 @@
 <template>
-  <router-view></router-view>
+  <div>
+    <Loader v-model="$root['loading']" fixed />
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
+import Loader from './views/shared/Loader';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    Loader
+  }
 }
 </script>
 
