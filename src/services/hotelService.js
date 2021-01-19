@@ -33,4 +33,8 @@ export default class HotelService {
     async getRoomById(roomId) {
         return await this.httpService.get(environment.ApiHotel.RoomById.replace('{roomId}', roomId));
     }
+
+    async deleteRoom(roomId) {
+        return await this.httpService.delete(environment.ApiHotel.RoomById.replace('{roomId}', roomId));
+    }
 }

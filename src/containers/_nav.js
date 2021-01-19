@@ -29,6 +29,12 @@ export default [
         icon: 'cil-layers'
       },
       {
+        _name: 'CSidebarNavItem',
+        name: 'Booking',
+        to: '/setting/bookings',
+        icon: 'cil-pencil'
+      },
+      {
         _name: 'CSidebarNavTitle',
         _children: ['Theme']
       },
