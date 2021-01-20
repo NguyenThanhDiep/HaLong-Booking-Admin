@@ -1,11 +1,11 @@
 <template>
   <div class="hotel">
-    <div class="d-flex mb-3">
+    <div class="title mb-3">
       <b-button variant="outline-primary" @click="backToList"
         ><i class="fas fa-angle-left"></i> Back to list hotels</b-button
       >
-      <h2 class="text-center text-uppercase flex-grow-1">{{ title }}</h2>
-      <b-button variant="outline-danger" @click="onDeleteHotel"
+      <h2 class="text-center text-uppercase">{{ title }}</h2>
+      <b-button variant="outline-danger" @click="onDeleteHotel" v-if="isEdit"
         >Delete</b-button
       >
     </div>
@@ -142,7 +142,7 @@
     </CCard>
 
     <!-- List of rooms -->
-    <CCard>
+    <CCard v-if="isEdit">
       <CCardHeader>
         <div class="d-flex">
           <h3 class="flex-grow-1">List of Rooms</h3>
@@ -152,7 +152,13 @@
         </div>
       </CCardHeader>
       <CCardBody>
-        <b-table :items="rooms" :fields="roomFields" striped responsive="sm">
+        <b-table
+          :items="rooms"
+          :fields="roomFields"
+          striped
+          responsive="sm"
+          show-empty
+        >
           <template #cell(index)="data">
             {{ data.index + 1 }}
           </template>
@@ -192,6 +198,12 @@
                 >Delete</b-button
               >
             </div>
+          </template>
+          <template #empty="">
+            <h6>This hotel haven't had any rooms yet.</h6>
+          </template>
+          <template #emptyfiltered="">
+            <h6>No result</h6>
           </template>
         </b-table>
       </CCardBody>
@@ -240,6 +252,22 @@
 
 <style lang="scss" scoped>
 .hotel {
+  .title {
+    position: relative;
+    h2 {
+      position: absolute;
+      width: 100%;
+      top: 0;
+    }
+    button {
+      position: relative;
+      top: 0;
+      z-index: 100;
+      &:last-child {
+        float: right;
+      }
+    }
+  }
   .form {
     background-color: white;
     color: black;
@@ -252,6 +280,7 @@
   }
 }
 </style>
+
 <script>
 import HotelService from "../../services/hotelService";
 import Vue from "vue";
@@ -264,6 +293,7 @@ export default {
       hotelService: new HotelService(),
       originDataHotel: null,
       isEdit: false,
+      hotelId: 0,
 
       name: null,
       srcImg: null,
@@ -289,6 +319,7 @@ export default {
   created() {
     if (this.$route.params.id && this.$route.params.id !== "0") {
       this.isEdit = true;
+      this.hotelId = this.$route.params.id;
     }
   },
   async mounted() {
@@ -337,7 +368,7 @@ export default {
     },
     buildDataForAPI() {
       return {
-        id: this.isEdit ? this.originDataHotel.id : 0,
+        id: this.isEdit ? this.hotelId : 0,
         name: this.name,
         srcImg: this.srcImg,
         price: this.price,
@@ -408,8 +439,8 @@ export default {
       const confirm = await Popup.confirmYesNo(message);
       if (confirm) {
         this.$root["loading"] = true;
-        if (this.originDataHotel && this.originDataHotel.id) {
-          await this.hotelService.deleteHotel(this.originDataHotel.id);
+        if (this.hotelId) {
+          await this.hotelService.deleteHotel(this.hotelId);
         }
         new Vue().$bvToast.toast("Delete hotel successfully!", {
           title: "Success",
@@ -420,9 +451,17 @@ export default {
         this.backToList();
       }
     },
-    async onAddRoom() {},
+    async onAddRoom() {
+      this.$router.push({
+        name: "Room",
+        params: { hotelId: this.hotelId, roomId: 0 },
+      });
+    },
     async onEditRoom(roomId) {
-      this.$router.push({ name: 'Room', params: { hotelId: this.originDataHotel.id, roomId: roomId }});
+      this.$router.push({
+        name: "Room",
+        params: { hotelId: this.originDataHotel.id, roomId: roomId },
+      });
     },
     async onDeleteRoom(roomId) {
       const message = "Do you confirm to delete this room?";

@@ -6,6 +6,7 @@ export const environment = {
         AllHotels: "hotels/",
         GetHotelsByName: "hotels/?searchString={searchString}",
         HotelById: "hotels/{hotelId}/",
+        AllRooms: "rooms/",
         RoomById: "rooms/{roomId}/"
     }
 };

@@ -37,4 +37,12 @@ export default class HotelService {
     async deleteRoom(roomId) {
         return await this.httpService.delete(environment.ApiHotel.RoomById.replace('{roomId}', roomId));
     }
+
+    async createRoom(roomModel) {
+        return await this.httpService.post(environment.ApiHotel.AllRooms, roomModel);
+    }
+
+    async updateRoom(roomModel) {
+        return await this.httpService.put(environment.ApiHotel.RoomById.replace('{roomId}', roomModel.id), roomModel);
+    }
 }
