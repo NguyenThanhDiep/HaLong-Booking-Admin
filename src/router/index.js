@@ -63,6 +63,7 @@ const Rooms = () => import('@/views/setting/Rooms')
 const Hotel = () => import('@/views/setting/Hotel')
 const Room = () => import('@/views/setting/Room')
 const Bookings = () => import('@/views/setting/Bookings')
+const Booking = () => import('@/views/setting/Booking')
 
 Vue.use(Router)
 
@@ -118,6 +119,11 @@ function configRoutes () {
               path: 'bookings',
               name: 'Bookings',
               component: Bookings,
+            },
+            {
+              path: 'bookings/:id',
+              name: 'Booking',
+              component: Booking,
             }
           ]
         },

@@ -45,4 +45,12 @@ export default class HotelService {
     async updateRoom(roomModel) {
         return await this.httpService.put(environment.ApiHotel.RoomById.replace('{roomId}', roomModel.id), roomModel);
     }
+
+    async getBookingsByStatus(status) {
+        return await this.httpService.get(environment.ApiHotel.AllBookings + '?status=' + status);
+    }
+
+    async getBookingById(bookingId) {
+        return await this.httpService.get(environment.ApiHotel.BookingById.replace('{bookingId}', bookingId));
+    }
 }

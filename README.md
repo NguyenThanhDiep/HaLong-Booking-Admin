@@ -29,6 +29,9 @@ $ cd halong-booking-admin
 
 # install app's dependencies
 $ npm install
+
+# Run below script if web is failed when npm run serve
+$ npm i node-sass --save
 ```
 
 #### Usage
