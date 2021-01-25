@@ -80,7 +80,7 @@
         </div>
       </CCardHeader>
       <CCardBody>
-        <b-table
+        <!-- <b-table
           :items="bookingsData[tabActive] || []"
           :fields="bookingFields"
           @row-dblclicked="onGoToDetailBooking"
@@ -88,7 +88,14 @@
           <template #cell(isSelected)="data">
             <b-form-checkbox v-model="data.value"></b-form-checkbox>
           </template>
-        </b-table>
+        </b-table> -->
+        <Table
+          :fields="bookingFields"
+          :items="bookingsData[tabActive].items || []"
+          :loading="loading"
+          :headerObject="bookingsData[tabActive].headerObject || this.originHeaderObject"
+          @rowDbClick="onDbClickBooking"
+        ></Table>
       </CCardBody>
     </CCard>
   </div>
@@ -125,13 +132,15 @@
 
 <script>
 import HotelService from "../../services/hotelService";
+import Table from "../shared/Table";
 
 export default {
   name: "Bookings",
+  components: { Table },
   async mounted() {
-    this.$root["loading"] = true;
+    this.loading = true;
     await this.getBookingsByStatus(this.tabActive);
-    this.$root["loading"] = false;
+    this.loading = false;
   },
   data() {
     return {
@@ -140,13 +149,12 @@ export default {
       tabs: ["New", "Processing", "Done", "Cancel"],
       tabActive: "New",
       bookingsData: {
-        New: null,
-        Processing: null,
-        Done: null,
-        Cancel: null,
+        New: { items: null, headerObject: this.originHeaderObject},
+        Processing: { items: null, headerObject: this.originHeaderObject},
+        Done: { items: null, headerObject: this.originHeaderObject},
+        Cancel: { items: null, headerObject: this.originHeaderObject},
       },
       bookingFields: [
-        { key: "isSelected", label: "" },
         { key: "nameCustomer", label: "Name Customer", sortable: true },
         { key: "phoneNumber", label: "Phone Number", sortable: true },
         { key: "email", label: "Email", sortable: true },
@@ -158,11 +166,24 @@ export default {
       filterOn: [],
       bookingDateFrom: null,
       bookingDateTo: null,
+      loading: false,
+      originHeaderObject: {
+        sort: { label: "", key: "", sort: "" },
+        filters: [],
+        filteredCount: "",
+        additionalFilters: [],
+      },
     };
   },
   methods: {
     onChangeTab(tab) {
       this.tabActive = tab;
+      this.originHeaderObject = {
+        sort: { label: "", key: "", sort: "" },
+        filters: [],
+        filteredCount: "",
+        additionalFilters: [],
+      };
       this.getBookingsByStatus(tab);
     },
     mapDataFromAPI(data) {
@@ -185,12 +206,15 @@ export default {
       }
     },
     async getBookingsByStatus(status) {
-      if (this.bookingsData[status] === null) {
+      this.loading = true;
+      if (this.bookingsData[status].items === null) {
         const res = await this.hotelService.getBookingsByStatus(status);
-        this.bookingsData[status] = this.mapDataFromAPI(res);
+        this.bookingsData[status].items = this.mapDataFromAPI(res);
+        this.bookingsData[status].headerObject = this.originHeaderObject;
       }
+      this.loading = false;
     },
-    onGoToDetailBooking(booking) {
+    onDbClickBooking(booking) {
       this.$router.push({ name: "Booking", params: { id: booking.id } });
     },
   },
