@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
+import moment from 'moment'
 
 Vue.config.performance = true
 Vue.use(CoreuiVue)
@@ -31,6 +32,12 @@ Vue.directive('click-outside', {
 		document.body.removeEventListener('click', el.clickOutsideEvent)
 	}
 });
+Vue.filter('formatDateTime', function (value, format = 'D/M/YYYY, h:mm:ss a') {
+  if (value) {
+    return moment.parseZone(value).format(format);
+  }
+  return value;
+})
 
 new Vue({
   el: '#app',

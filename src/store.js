@@ -8,6 +8,7 @@ const state = {
   sidebarShow: 'responsive',
   sidebarMinimize: false,
   userName: null,
+  adminId: 0,
   isLogin: false,
 };
 

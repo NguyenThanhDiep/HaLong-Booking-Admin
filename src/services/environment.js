@@ -9,7 +9,8 @@ export const environment = {
         AllRooms: "rooms/",
         RoomById: "rooms/{roomId}/",
         AllBookings: "bookings/",
-        BookingById: "bookings/{bookingId}/"
+        BookingById: "bookings/{bookingId}/",
+        AllTimelines: "timelines/",
     },
     ApiAdmin: {
         BaseUrl: "http://localhost:57223/",

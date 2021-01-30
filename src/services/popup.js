@@ -3,15 +3,15 @@ import Vue from 'vue';
 export default class Popup {
     static async confirmYesNo(message, vueComponent = new Vue(), options = null){
         const msgBox = {
-            title: options?.title,
-            headerClass: "" + options?.headerClass,
+            title: options?.title || 'Confirm',
+            headerClass: "justify-content-center text-center " + options?.headerClass,
             centered: options?.centered || true,
             size: options ? options.size : "sm",
             bodyClass: "justify-content-center text-center",
             okTitle: options ? options.okTitle : 'Yes',
-            okVariant: options ? options.okVariant :  "btn btn-outline-primary btnOk",
+            okVariant: options ? options.okVariant :  "btn btn-primary btnOk",
             cancelTitle: options ? options.cancelTitle : 'Cancel',
-            cancelVariant: options ? options.cancelVariant :  "btn btn-outline-secondary",
+            cancelVariant: options ? options.cancelVariant :  "btn btn-secondary",
             footerClass:  options?.footerClass || "justify-content-center border-top-0 pt-0",
             hideHeaderClose: options?.hideHeaderClose,
             noCloseOnBackdrop: true
@@ -34,6 +34,7 @@ export default class Popup {
     static async msgBoxOk(message, vueComponent = new Vue(), options = null) {
         const msgBox = {
             title: options?.title || 'Warning',
+            headerClass: "justify-content-center text-center " + options?.headerClass,
             centered: options?.centered || true,
             bodyClass: "justify-content-center",
             footerClass: "justify-content-center border-top-0 pt-0",

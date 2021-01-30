@@ -77,6 +77,7 @@ export default {
     logout(){
       this.$store.commit("set", ["isLogin", false]);
       this.$store.commit("set", ["userName", null]);
+      this.$store.commit("set", ["adminId", 0]);
       this.$router.push({ name: 'Login' });
     }
   }

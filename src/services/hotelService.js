@@ -53,4 +53,20 @@ export default class HotelService {
     async getBookingById(bookingId) {
         return await this.httpService.get(environment.ApiHotel.BookingById.replace('{bookingId}', bookingId));
     }
+
+    async updateBooking(bookingModel) {
+        return await this.httpService.put(environment.ApiHotel.BookingById.replace('{bookingId}', bookingModel.id), bookingModel);
+    }
+
+    async deleteBooking(bookingId) {
+        return await this.httpService.delete(environment.ApiHotel.BookingById.replace('{bookingId}', bookingId));
+    }
+
+    async changeStatusBooking(bookingModel, adminId) {
+        return await this.httpService.put(environment.ApiHotel.BookingById.replace('{bookingId}', bookingModel.id) + '?adminId=' + adminId, bookingModel);
+    }
+
+    async getTimelinesByBookingId(bookingId) {
+        return await this.httpService.get(environment.ApiHotel.AllTimelines + '?bookingId=' + bookingId);
+    }
 }

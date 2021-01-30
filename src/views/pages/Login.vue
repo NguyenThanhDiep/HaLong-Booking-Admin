@@ -93,6 +93,7 @@ export default {
         if (Array.isArray(adminInfoArr) && adminInfoArr.length > 0) {
           this.$store.commit("set", ["isLogin", true]);
           this.$store.commit("set", ["userName", adminInfoArr[0].userName]);
+          this.$store.commit("set", ["adminId", adminInfoArr[0].id]);
           this.$router.push({ name: 'Hotels' });
           return true;
         }

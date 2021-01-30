@@ -26,13 +26,40 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-2">Image:</div>
+          <div class="col-2">Background Image:</div>
           <div class="col-10">
             <!-- <b-form-file v-model="srcImg" placeholder="Choose a file or drop it here..." drop-placeholder="Drop file here..." accept=".jpg, .png"></b-form-file> -->
             <b-form-input
               v-model="srcImg"
               placeholder="Url image of the hotel"
             ></b-form-input>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2">Detail Images:</div>
+          <div class="col-10">
+            <div
+              v-for="(img, indexI) in srcDetailImgs"
+              :key="indexI"
+              class="w-100 d-flex mb-2"
+            >
+              <b-form-input
+                v-model="srcDetailImgs[indexI]"
+                placeholder="Url Image of the hotel"
+              ></b-form-input>
+              <b-button
+                variant="outline-primary"
+                v-show="indexI === srcDetailImgs.length - 1"
+                @click="onAddService(srcDetailImgs)"
+                ><i class="fas fa-plus"></i
+              ></b-button>
+              <b-button
+                variant="outline-danger"
+                v-show="checkShowMinusSign(indexI, srcDetailImgs)"
+                @click="onDeleteService(indexI, srcDetailImgs)"
+                ><i class="fas fa-minus"></i
+              ></b-button>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -297,6 +324,7 @@ export default {
 
       name: null,
       srcImg: null,
+      srcDetailImgs: [""],
       price: null,
       star: 0,
       address: null,
@@ -341,7 +369,8 @@ export default {
         !this.star ||
         !this.address ||
         this.freeServices.filter((val) => val !== "").length == 0 ||
-        this.services.filter((val) => val !== "").length == 0
+        this.services.filter((val) => val !== "").length == 0 ||
+        this.srcDetailImgs.filter((val) => val !== "").length == 0
       );
     },
   },
@@ -360,6 +389,7 @@ export default {
       this.address = data.address;
       this.price = parseInt(data.price);
       this.srcImg = data.srcImg;
+      this.srcDetailImgs = data.srcDetailImgs.split(",");
       this.services = data.services.split(",");
       this.freeServices = data.freeServices.split(",");
       this.star = data.star;
@@ -371,6 +401,9 @@ export default {
         id: this.isEdit ? this.hotelId : 0,
         name: this.name,
         srcImg: this.srcImg,
+        srcDetailImgs: this.srcDetailImgs
+          .filter((val) => val !== "")
+          .toString(),
         price: this.price,
         star: this.star,
         address: this.address,
@@ -410,6 +443,7 @@ export default {
       } else {
         this.name = null;
         this.srcImg = null;
+        this.srcDetailImgs = [""];
         this.price = 0;
         this.address = null;
         this.services = [""];
