@@ -31,4 +31,16 @@ export default class Popup {
             });
         })
     }
+    static async msgBoxOk(message, vueComponent = new Vue(), options = null) {
+        const msgBox = {
+            title: options?.title || 'Warning',
+            centered: options?.centered || true,
+            bodyClass: "justify-content-center",
+            footerClass: "justify-content-center border-top-0 pt-0",
+            okVariant: "primary px-5",
+        };
+        return new Promise((r) => {
+            vueComponent.$bvModal.msgBoxOk(message, msgBox).then(res => { r(res) });
+        })
+    }
 }

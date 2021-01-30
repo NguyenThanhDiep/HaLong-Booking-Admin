@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store'
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -67,18 +68,18 @@ const Booking = () => import('@/views/setting/Booking')
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'hash', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
-  routes: configRoutes()
+  routes: configRoutes(),
 })
 
 function configRoutes () {
   return [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/hotels',
       name: 'Home',
       component: TheContainer,
       children: [
@@ -387,4 +388,11 @@ function configRoutes () {
     }
   ]
 }
+
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'Login' && !store.state.isLogin) next({ name: 'Login' })
+  else next()
+})
+
+export default router;
 

@@ -1,58 +1,6 @@
 <template>
   <div class="bookings">
-    <CCard>
-      <CCardHeader>
-        <div
-          class="d-flex"
-          aria-controls="filter-area"
-          @click="isShowFilterArea = !isShowFilterArea"
-        >
-          <h5 class="flex-grow-1">Filter Area</h5>
-          <div>
-            <i class="fas fa-caret-down"></i>
-          </div>
-        </div>
-      </CCardHeader>
-      <b-collapse id="filter-area" v-model="isShowFilterArea">
-        <CCardBody>
-          <div class="d-flex">
-            <div class="mr-5">Filter</div>
-            <b-form-input v-model="stringFilter" class="w-50"></b-form-input>
-            <b-button class="ml-3" @click="stringFilter = ''">Clear</b-button>
-          </div>
-          <div class="d-flex my-3">
-            <div class="mr-5">Filter On</div>
-            <div>
-              <b-form-checkbox-group v-model="filterOn">
-                <b-form-checkbox value="nameCustomer"
-                  >Name Customer</b-form-checkbox
-                >
-                <b-form-checkbox value="phoneNumber"
-                  >Phone Number</b-form-checkbox
-                >
-                <b-form-checkbox value="email">Email</b-form-checkbox>
-                <b-form-checkbox value="hotelName">Hotel</b-form-checkbox>
-                <b-form-checkbox value="roomName">Room</b-form-checkbox>
-              </b-form-checkbox-group>
-              <div class="font-weight-light font-italic">
-                Leave all unchecked to filter on all data
-              </div>
-            </div>
-          </div>
-          <div class="d-flex">
-            <div class="mr-5">Booking Date</div>
-            <div class="d-flex mr-3">
-              <div class="mr-3">From</div>
-              <b-form-datepicker v-model="bookingDateFrom"></b-form-datepicker>
-            </div>
-            <div class="d-flex">
-              <div class="mr-3">To</div>
-              <b-form-datepicker v-model="bookingDateTo"></b-form-datepicker>
-            </div>
-          </div>
-        </CCardBody>
-      </b-collapse>
-    </CCard>
+    <h2 class="text-center mb-3 font-weight-bold">List of Bookings</h2>
     <CCard>
       <CCardHeader>
         <div class="d-flex">
@@ -80,20 +28,11 @@
         </div>
       </CCardHeader>
       <CCardBody>
-        <!-- <b-table
-          :items="bookingsData[tabActive] || []"
-          :fields="bookingFields"
-          @row-dblclicked="onGoToDetailBooking"
-        >
-          <template #cell(isSelected)="data">
-            <b-form-checkbox v-model="data.value"></b-form-checkbox>
-          </template>
-        </b-table> -->
         <Table
           :fields="bookingFields"
           :items="bookingsData[tabActive].items || []"
           :loading="loading"
-          :headerObject="bookingsData[tabActive].headerObject || this.originHeaderObject"
+          :headerObject="bookingsData[tabActive].headerObject || originHeaderObject"
           @rowDbClick="onDbClickBooking"
         ></Table>
       </CCardBody>
@@ -145,7 +84,6 @@ export default {
   data() {
     return {
       hotelService: new HotelService(),
-      isShowFilterArea: false,
       tabs: ["New", "Processing", "Done", "Cancel"],
       tabActive: "New",
       bookingsData: {
@@ -162,10 +100,6 @@ export default {
         { key: "roomName", label: "Booked Room", sortable: true },
         { key: "bookingDate", label: "Booking Date", sortable: true },
       ],
-      stringFilter: "",
-      filterOn: [],
-      bookingDateFrom: null,
-      bookingDateTo: null,
       loading: false,
       originHeaderObject: {
         sort: { label: "", key: "", sort: "" },

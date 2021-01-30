@@ -18,9 +18,12 @@
         <caption class="d-none"></caption>
         <thead>
           <tr ref="rowHeader" v-click-outside="onClickOutSiteHeader">
-            <th>
+            <th v-show="isShowSelectCol">
               <div class="th-fixed">
-                <b-form-checkbox v-model="isSelectAll" @change="onClickSelectAll"></b-form-checkbox>
+                <b-form-checkbox
+                  v-model="isSelectAll"
+                  @change="onClickSelectAll"
+                ></b-form-checkbox>
               </div>
             </th>
             <th
@@ -141,7 +144,7 @@
             @dblclick="onRowDbclick(item)"
             ref="tableRow"
           >
-            <td>
+            <td v-show="isShowSelectCol">
               <div>
                 <b-form-checkbox
                   v-model="item.isSelected"
@@ -150,7 +153,20 @@
               </div>
             </td>
             <td v-for="(field, index) in fields" :key="index">
-              <template>
+              <template v-if="['price'].indexOf(field.key) >= 0">
+                {{ parseInt(item[field.key]) }}
+              </template>
+              <template v-else-if="['isSale'].indexOf(field.key) >= 0">
+                <b-form-checkbox
+                  switch
+                  v-model="item[field.key]"
+                  disabled
+                ></b-form-checkbox>
+              </template>
+              <template v-else-if="['star'].indexOf(field.key) >= 0">
+                <i v-for="(s, indexS) in item[field.key]" class="fas fa-star yellow" :key="indexS"></i>
+              </template>
+              <template v-else>
                 <div class="field-value">
                   {{ item[field.key] }}
                 </div>
@@ -171,6 +187,10 @@
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none;
+
+  .yellow {
+    color: #ffcc00;
+  }
 
   thead {
     th {
@@ -454,7 +474,24 @@ import $ from "jquery";
 
 export default Vue.extend({
   name: "Table",
-  props: ["fields", "items", "loading", "headerObject"],
+  props: {
+    fields: {},
+    items: {},
+    loading: {},
+    headerObject: {
+      default: function () {
+        return {
+          sort: { label: "", key: "", sort: "" },
+          filters: [],
+          filteredCount: "",
+          additionalFilters: [],
+        };
+      },
+    },
+    isShowSelectCol: {
+      default: true,
+    },
+  },
   data() {
     return {
       displayedItem: 0,

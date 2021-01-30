@@ -1,27 +1,38 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-Vue.use(Vuex)
+import Vue from 'vue';
+import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
+
+Vue.use(Vuex);
 
 const state = {
   sidebarShow: 'responsive',
-  sidebarMinimize: false
-}
+  sidebarMinimize: false,
+  userName: null,
+  isLogin: false,
+};
 
 const mutations = {
-  toggleSidebarDesktop (state) {
-    const sidebarOpened = [true, 'responsive'].includes(state.sidebarShow)
-    state.sidebarShow = sidebarOpened ? false : 'responsive'
+  toggleSidebarDesktop(state) {
+    const sidebarOpened = [true, 'responsive'].includes(state.sidebarShow);
+    state.sidebarShow = sidebarOpened ? false : 'responsive';
   },
-  toggleSidebarMobile (state) {
-    const sidebarClosed = [false, 'responsive'].includes(state.sidebarShow)
-    state.sidebarShow = sidebarClosed ? true : 'responsive'
+  toggleSidebarMobile(state) {
+    const sidebarClosed = [false, 'responsive'].includes(state.sidebarShow);
+    state.sidebarShow = sidebarClosed ? true : 'responsive';
   },
-  set (state, [variable, value]) {
-    state[variable] = value
+  set(state, [variable, value]) {
+    state[variable] = value;
   }
-}
+};
 
 export default new Vuex.Store({
   state,
-  mutations
-})
+  mutations,
+  strict: false,
+  plugins: [createPersistedState({
+    storage: window.localStorage,
+    reducer: (val) => {
+      return val;
+    }
+  })],
+});
