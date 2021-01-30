@@ -36,7 +36,7 @@ export default class Popup {
             title: options?.title || 'Warning',
             headerClass: "justify-content-center text-center " + options?.headerClass,
             centered: options?.centered || true,
-            bodyClass: "justify-content-center",
+            bodyClass: "justify-content-center text-center",
             footerClass: "justify-content-center border-top-0 pt-0",
             okVariant: "primary px-5",
         };

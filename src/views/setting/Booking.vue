@@ -1,8 +1,8 @@
 <template>
   <div class="booking">
     <div class="title mb-3">
-      <b-button variant="outline-primary" @click="backToList"
-        ><i class="fas fa-angle-left"></i> Back to list bookings</b-button
+      <b-button variant="outline-primary" @click="back"
+        ><i class="fas fa-angle-left"></i> Back</b-button
       >
     </div>
     <CCard>
@@ -464,6 +464,7 @@ export default {
   },
   methods: {
     buildDataForTimeline(data) {
+      this.timelines = [];
       if (Array.isArray(data) && data.length > 0) {
         const cancelStatus = data.find(
           (t) => t.status === StatusBooking.Cancel
@@ -571,8 +572,9 @@ export default {
         params: { hotelId: hotelId, roomId: roomId },
       });
     },
-    backToList(){
-      this.$router.push({ name: 'Bookings' });
+    back(){
+      this.$router.back();
+      //this.$router.push({ name: 'Bookings' });
     }
   },
 };

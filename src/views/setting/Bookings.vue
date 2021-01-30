@@ -1,6 +1,6 @@
 <template>
   <div class="bookings">
-    <h2 class="text-center mb-3 font-weight-bold">List of Bookings</h2>
+    <h2 class="text-center mb-3 font-weight-bold">List Bookings</h2>
     <CCard>
       <CCardHeader>
         <div class="d-flex">
@@ -14,7 +14,7 @@
               {{ tab }}
             </button>
           </div>
-          <div>
+          <!-- <div>
             <b-dropdown text="Options" variant="outline-primary">
               <b-dropdown-item v-show="tabActive === 'New'"
                 >Processing</b-dropdown-item
@@ -24,7 +24,7 @@
               >
               <b-dropdown-item>Cancel</b-dropdown-item>
             </b-dropdown>
-          </div>
+          </div> -->
         </div>
       </CCardHeader>
       <CCardBody>

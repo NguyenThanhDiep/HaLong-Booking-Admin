@@ -1,75 +1,77 @@
 <template>
-  <div class="position-relative h-100">
-    <a href="javascript: void(0)" class="d-none" ref="btnScroll">
-      <div class="toggle-btn">
-        <div class="btn-scroll" @click="onScrollToTop">
-          <i class="fas fa-angle-double-up text-white"></i>
+  <div>
+    <div class="w-100 text-right mb-3 font-weight-bold">Count: {{ displayedItems.length }}</div>
+    <div class="position-relative h-100">
+      <a href="javascript: void(0)" class="d-none" ref="btnScroll">
+        <div class="toggle-btn">
+          <div class="btn-scroll" @click="onScrollToTop">
+            <i class="fas fa-angle-double-up text-white"></i>
+          </div>
+          <i class="fa fa-angle-up" aria-hidden="true"></i>
         </div>
-        <i class="fa fa-angle-up" aria-hidden="true"></i>
-      </div>
-    </a>
-    <div
-      id="orderListTable"
-      class="content-table h-100"
-      @scroll="onScroll"
-      ref="tableContent"
-    >
-      <table class="order-list-table w-100" ref="order-list-table">
-        <caption class="d-none"></caption>
-        <thead>
-          <tr ref="rowHeader" v-click-outside="onClickOutSiteHeader">
-            <th v-show="isShowSelectCol">
-              <div class="th-fixed">
-                <b-form-checkbox
-                  v-model="isSelectAll"
-                  @change="onClickSelectAll"
-                ></b-form-checkbox>
-              </div>
-            </th>
-            <th
-              scope="col"
-              v-for="(field, index) in fields"
-              :key="index"
-              :class="[isShowFilterIcon(field.key) ? 'filtered' : '']"
-            >
-              <div class="hidden">
-                <i
-                  class="fa fa-filter filtered inactive-icons mr-2"
-                  v-show="isShowFilterIcon(field)"
-                ></i>
-                {{ field.label }}
-              </div>
-              <div class="th-fixed" ref="header">
-                <div
-                  class="d-flex flex-grow-1 align-items-center h-100"
-                  @click="onClickShowFilter(field.key + index)"
-                >
-                  <i class="fa fa-filter inactive-icons mr-2 d-none"></i>
-                  <span class="label-header">{{ field.label }}</span>
+      </a>
+      <div
+        id="orderListTable"
+        class="content-table h-100"
+        @scroll="onScroll"
+        ref="tableContent"
+      >
+        <table class="order-list-table w-100" ref="order-list-table">
+          <caption class="d-none"></caption>
+          <thead>
+            <tr ref="rowHeader" v-click-outside="onClickOutSiteHeader">
+              <th v-show="isShowSelectCol">
+                <div class="th-fixed">
+                  <b-form-checkbox
+                    v-model="isSelectAll"
+                    @change="onClickSelectAll"
+                  ></b-form-checkbox>
                 </div>
-                <button
-                  class="btn-sort h-100"
-                  :id="`sorting_${field.key}_${index}`"
-                  @click="sortTableByField(field)"
-                >
-                  <span v-show="field.sort == 'asc'">
-                    <i class="fas fa-sort-up"></i>
-                  </span>
-                  <span v-show="field.sort == 'desc'">
-                    <i class="fas fa-sort-down"></i>
-                  </span>
-                </button>
-                <ul
-                  :class="[
-                    'filter-dropdown',
-                    index == fields.length - 1 ? 'right' : '',
-                  ]"
-                  :id="field.key + index"
-                  :ref="'filter-' + field.key"
-                >
-                  <li class="pt-2">
-                    <template v-if="isDateColumn(field.key)">
-                      <!-- <DateTimePicker
+              </th>
+              <th
+                scope="col"
+                v-for="(field, index) in fields"
+                :key="index"
+                :class="[isShowFilterIcon(field.key) ? 'filtered' : '']"
+              >
+                <div class="hidden">
+                  <i
+                    class="fa fa-filter filtered inactive-icons mr-2"
+                    v-show="isShowFilterIcon(field)"
+                  ></i>
+                  {{ field.label }}
+                </div>
+                <div class="th-fixed" ref="header">
+                  <div
+                    class="d-flex flex-grow-1 align-items-center h-100"
+                    @click="onClickShowFilter(field.key + index)"
+                  >
+                    <i class="fa fa-filter inactive-icons mr-2 d-none"></i>
+                    <span class="label-header">{{ field.label }}</span>
+                  </div>
+                  <button
+                    class="btn-sort h-100"
+                    :id="`sorting_${field.key}_${index}`"
+                    @click="sortTableByField(field)"
+                  >
+                    <span v-show="field.sort == 'asc'">
+                      <i class="fas fa-sort-up"></i>
+                    </span>
+                    <span v-show="field.sort == 'desc'">
+                      <i class="fas fa-sort-down"></i>
+                    </span>
+                  </button>
+                  <ul
+                    :class="[
+                      'filter-dropdown',
+                      index == fields.length - 1 ? 'right' : '',
+                    ]"
+                    :id="field.key + index"
+                    :ref="'filter-' + field.key"
+                  >
+                    <li class="pt-2">
+                      <template v-if="isDateColumn(field.key)">
+                        <!-- <DateTimePicker
                         :id="field.key + '-' + index"
                         :ref="'inputDateTime-' + field.key + index"
                         @input="
@@ -82,99 +84,109 @@
                         "
                         autocomplete="off"
                       ></DateTimePicker> -->
-                    </template>
-                    <template v-else>
-                      <b-form-input
-                        type="text"
-                        debounce="500"
-                        :ref="'inputSearch-' + field.key + index"
-                        @keyup="onSearchOptionsByColumn($event, field.key)"
-                      ></b-form-input>
-                    </template>
-                  </li>
-                  <li>
-                    <b>Select {{ field.label }}</b>
-                  </li>
-                  <li class="px-0">
-                    <div class="list-option">
-                      <b-form-checkbox
-                        v-for="(option, oIndex) in filteredFilters[field.key]"
-                        class="d-flex ml-3"
-                        v-model="option.checked"
-                        :key="oIndex"
-                        @change="onFilterByColumn(option)"
-                      >
-                        <div
-                          class="d-flex justify-content-between align-content-between pr-2"
+                      </template>
+                      <template v-else>
+                        <b-form-input
+                          type="text"
+                          debounce="500"
+                          :ref="'inputSearch-' + field.key + index"
+                          @keyup="onSearchOptionsByColumn($event, field.key)"
+                        ></b-form-input>
+                      </template>
+                    </li>
+                    <li>
+                      <b>Select {{ field.label }}</b>
+                    </li>
+                    <li class="px-0">
+                      <div class="list-option">
+                        <b-form-checkbox
+                          v-for="(option, oIndex) in filteredFilters[field.key]"
+                          class="d-flex ml-3"
+                          v-model="option.checked"
+                          :key="oIndex"
+                          @change="onFilterByColumn(option)"
                         >
-                          <span>{{ option.label }}</span>
-                          <span> {{ option.count }} </span>
-                        </div>
-                      </b-form-checkbox>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="body-table">
-          <tr v-if="loading">
-            <td
-              :colspan="fields.length + 1"
-              class="text-primary font-weight-bold"
-            >
-              <div class="d-flex align-items-center justify-content-center">
-                <b-spinner class="align-middle mr-2"></b-spinner>
-                <strong>Loading...</strong>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="!loading && filteredItems.length == 0">
-            <td
-              :colspan="fields.length + 1"
-              class="text-primary font-weight-bold"
-            >
-              <span>No matching any Bookings.</span>
-            </td>
-          </tr>
-          <tr
-            v-for="(item, index) in displayedItems"
-            :key="index"
-            @dblclick="onRowDbclick(item)"
-            ref="tableRow"
-          >
-            <td v-show="isShowSelectCol">
-              <div>
-                <b-form-checkbox
-                  v-model="item.isSelected"
-                  @change="onSelectItem"
-                ></b-form-checkbox>
-              </div>
-            </td>
-            <td v-for="(field, index) in fields" :key="index">
-              <template v-if="['price'].indexOf(field.key) >= 0">
-                {{ parseInt(item[field.key]) }}
-              </template>
-              <template v-else-if="['isSale'].indexOf(field.key) >= 0">
-                <b-form-checkbox
-                  switch
-                  v-model="item[field.key]"
-                  disabled
-                ></b-form-checkbox>
-              </template>
-              <template v-else-if="['star'].indexOf(field.key) >= 0">
-                <i v-for="(s, indexS) in item[field.key]" class="fas fa-star yellow" :key="indexS"></i>
-              </template>
-              <template v-else>
-                <div class="field-value">
-                  {{ item[field.key] }}
+                          <div
+                            class="d-flex justify-content-between align-content-between pr-2"
+                          >
+                            <span>{{ option.label }}</span>
+                            <span> {{ option.count }} </span>
+                          </div>
+                        </b-form-checkbox>
+                      </div>
+                    </li>
+                  </ul>
                 </div>
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="body-table">
+            <tr v-if="loading">
+              <td
+                :colspan="fields.length + 1"
+                class="text-primary font-weight-bold"
+              >
+                <div class="d-flex align-items-center justify-content-center">
+                  <b-spinner class="align-middle mr-2"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="!loading && filteredItems.length == 0">
+              <td
+                :colspan="fields.length + 1"
+                class="text-primary font-weight-bold"
+              >
+                <span>No matching any items.</span>
+              </td>
+            </tr>
+            <tr
+              v-for="(item, index) in displayedItems"
+              :key="index"
+              @dblclick="onRowDbclick(item)"
+              ref="tableRow"
+            >
+              <td v-show="isShowSelectCol">
+                <div>
+                  <b-form-checkbox
+                    v-model="item.isSelected"
+                    @change="onSelectItem"
+                  ></b-form-checkbox>
+                </div>
+              </td>
+              <td v-for="(field, index) in fields" :key="index">
+                <template v-if="['price'].indexOf(field.key) >= 0">
+                  {{ parseInt(item[field.key]) }}
+                </template>
+                <template v-else-if="['isSale'].indexOf(field.key) >= 0">
+                  <b-form-checkbox
+                    switch
+                    v-model="item[field.key]"
+                    disabled
+                  ></b-form-checkbox>
+                </template>
+                <template v-else-if="['star'].indexOf(field.key) >= 0">
+                  <i
+                    v-for="(s, indexS) in item[field.key]"
+                    class="fas fa-star yellow"
+                    :key="indexS"
+                  ></i>
+                </template>
+                <template v-else-if="['bookingDate'].indexOf(field.key) >= 0">
+                  <div class="field-value">
+                    {{ item[field.key] | formatDateTime }}
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="field-value">
+                    {{ item[field.key] }}
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -489,7 +501,7 @@ export default Vue.extend({
       },
     },
     isShowSelectCol: {
-      default: true,
+      default: false,
     },
   },
   data() {

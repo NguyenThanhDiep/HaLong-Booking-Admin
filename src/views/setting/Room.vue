@@ -1,8 +1,8 @@
 <template>
   <div class="room">
     <div class="title mb-3">
-      <b-button variant="outline-primary" @click="backToHotelPage"
-        ><i class="fas fa-angle-left"></i> Back to detail of hotel</b-button
+      <b-button variant="outline-primary" @click="back"
+        ><i class="fas fa-angle-left"></i> Back</b-button
       >
       <h2 class="text-center text-uppercase">{{ title }}</h2>
       <b-button variant="outline-danger" @click="onDeleteRoom" v-if="isEdit"
@@ -267,7 +267,7 @@ export default {
             variant: "success",
             solid: true,
           });
-          this.$router.push({ name: "Room", params: { hotelId: this.hotelId, roomId: newRoom.id } });
+          this.$router.replace({ name: "Room", params: { hotelId: this.hotelId, roomId: newRoom.id } });
         }
       }
       this.$root["loading"] = false;
@@ -285,10 +285,11 @@ export default {
         });
         this.$root["loading"] = false;
       }
-      this.backToHotelPage();
+      this.back();
     },
-    backToHotelPage() {
-      this.$router.push({ name: "Hotel", params: { id: this.hotelId } });
+    back() {
+      this.$router.back();
+      //this.$router.push({ name: "Hotel", params: { id: this.hotelId } });
     },
   },
 };

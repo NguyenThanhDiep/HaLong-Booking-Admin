@@ -1,8 +1,8 @@
 <template>
   <div class="hotel">
     <div class="title mb-3">
-      <b-button variant="outline-primary" @click="backToList"
-        ><i class="fas fa-angle-left"></i> Back to list hotels</b-button
+      <b-button variant="outline-primary" @click="back"
+        ><i class="fas fa-angle-left"></i> Back</b-button
       >
       <h2 class="text-center text-uppercase">{{ title }}</h2>
       <b-button variant="outline-danger" @click="onDeleteHotel" v-if="isEdit"
@@ -12,160 +12,162 @@
 
     <!-- Detail of hotel -->
     <CCard>
-      <CCardHeader>
+      <CCardHeader @click="isShowDetail = !isShowDetail">
         <h3>Detail</h3>
       </CCardHeader>
-      <CCardBody class="form">
-        <div class="row">
-          <div class="col-2 align-middle">Name:</div>
-          <div class="col-10">
-            <b-form-input
-              v-model="name"
-              placeholder="Name of the hotel"
-            ></b-form-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Background Image:</div>
-          <div class="col-10">
-            <!-- <b-form-file v-model="srcImg" placeholder="Choose a file or drop it here..." drop-placeholder="Drop file here..." accept=".jpg, .png"></b-form-file> -->
-            <b-form-input
-              v-model="srcImg"
-              placeholder="Url image of the hotel"
-            ></b-form-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Detail Images:</div>
-          <div class="col-10">
-            <div
-              v-for="(img, indexI) in srcDetailImgs"
-              :key="indexI"
-              class="w-100 d-flex mb-2"
-            >
+      <b-collapse v-model="isShowDetail">
+        <CCardBody class="form">
+          <div class="row">
+            <div class="col-2 align-middle">Name:</div>
+            <div class="col-10">
               <b-form-input
-                v-model="srcDetailImgs[indexI]"
-                placeholder="Url Image of the hotel"
+                v-model="name"
+                placeholder="Name of the hotel"
               ></b-form-input>
-              <b-button
-                variant="outline-primary"
-                v-show="indexI === srcDetailImgs.length - 1"
-                @click="onAddService(srcDetailImgs)"
-                ><i class="fas fa-plus"></i
-              ></b-button>
-              <b-button
-                variant="outline-danger"
-                v-show="checkShowMinusSign(indexI, srcDetailImgs)"
-                @click="onDeleteService(indexI, srcDetailImgs)"
-                ><i class="fas fa-minus"></i
-              ></b-button>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Price:</div>
-          <div class="col-10">
-            <b-form-input
-              v-model="price"
-              type="number"
-              placeholder="Price of the hotel"
-            ></b-form-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Address:</div>
-          <div class="col-10">
-            <b-form-input
-              v-model="address"
-              placeholder="Address of the hotel"
-            ></b-form-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Star:</div>
-          <div class="col-10">
-            <b-form-rating v-model="star" variant="warning"></b-form-rating>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">Services:</div>
-          <div class="col-10">
-            <div
-              v-for="(service, indexS) in services"
-              :key="indexS"
-              class="w-100 d-flex mb-2"
-            >
+          <div class="row">
+            <div class="col-2">Background Image:</div>
+            <div class="col-10">
+              <!-- <b-form-file v-model="srcImg" placeholder="Choose a file or drop it here..." drop-placeholder="Drop file here..." accept=".jpg, .png"></b-form-file> -->
               <b-form-input
-                v-model="services[indexS]"
-                placeholder="Service of the hotel"
+                v-model="srcImg"
+                placeholder="Url image of the hotel"
               ></b-form-input>
-              <b-button
-                variant="outline-primary"
-                v-show="indexS === services.length - 1"
-                @click="onAddService(services)"
-                ><i class="fas fa-plus"></i
-              ></b-button>
-              <b-button
-                variant="outline-danger"
-                v-show="checkShowMinusSign(indexS, services)"
-                @click="onDeleteService(indexS, services)"
-                ><i class="fas fa-minus"></i
-              ></b-button>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-2">FreeServices:</div>
-          <div class="col-10">
-            <div
-              v-for="(service, indexF) in freeServices"
-              :key="indexF"
-              class="w-100 d-flex mb-2"
-            >
-              <b-form-input
-                v-model="freeServices[indexF]"
-                placeholder="FreeServices of the hotel"
-              ></b-form-input>
-              <b-button
-                variant="outline-primary"
-                v-show="indexF === freeServices.length - 1"
-                @click="onAddService(freeServices)"
-                ><i class="fas fa-plus"></i
-              ></b-button>
-              <b-button
-                variant="outline-danger"
-                v-show="checkShowMinusSign(indexF, freeServices)"
-                @click="onDeleteService(indexF, freeServices)"
-                ><i class="fas fa-minus"></i
-              ></b-button>
+          <div class="row">
+            <div class="col-2">Detail Images:</div>
+            <div class="col-10">
+              <div
+                v-for="(img, indexI) in srcDetailImgs"
+                :key="indexI"
+                class="w-100 d-flex mb-2"
+              >
+                <b-form-input
+                  v-model="srcDetailImgs[indexI]"
+                  placeholder="Url Image of the hotel"
+                ></b-form-input>
+                <b-button
+                  variant="outline-primary"
+                  v-show="indexI === srcDetailImgs.length - 1"
+                  @click="onAddService(srcDetailImgs)"
+                  ><i class="fas fa-plus"></i
+                ></b-button>
+                <b-button
+                  variant="outline-danger"
+                  v-show="checkShowMinusSign(indexI, srcDetailImgs)"
+                  @click="onDeleteService(indexI, srcDetailImgs)"
+                  ><i class="fas fa-minus"></i
+                ></b-button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-2">On Sale:</div>
-          <div class="col-10">
-            <b-form-checkbox
-              v-model="isSale"
-              placeholder="isSale of the hotel"
-              switch
-              required
-            ></b-form-checkbox>
+          <div class="row">
+            <div class="col-2">Price:</div>
+            <div class="col-10">
+              <b-form-input
+                v-model="price"
+                type="number"
+                placeholder="Price of the hotel"
+              ></b-form-input>
+            </div>
           </div>
-        </div>
-        <div class="text-center">
-          <b-button
-            type="submit"
-            variant="outline-primary"
-            class="mr-3"
-            :disabled="isDisableSave"
-            @click="onSave"
-            >{{ isEdit ? "Save" : "Create" }}</b-button
-          >
-          <b-button type="reset" variant="outline-warning" @click="onReset"
-            >Reset</b-button
-          >
-        </div>
-      </CCardBody>
+          <div class="row">
+            <div class="col-2">Address:</div>
+            <div class="col-10">
+              <b-form-input
+                v-model="address"
+                placeholder="Address of the hotel"
+              ></b-form-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2">Star:</div>
+            <div class="col-10">
+              <b-form-rating v-model="star" variant="warning"></b-form-rating>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2">Services:</div>
+            <div class="col-10">
+              <div
+                v-for="(service, indexS) in services"
+                :key="indexS"
+                class="w-100 d-flex mb-2"
+              >
+                <b-form-input
+                  v-model="services[indexS]"
+                  placeholder="Service of the hotel"
+                ></b-form-input>
+                <b-button
+                  variant="outline-primary"
+                  v-show="indexS === services.length - 1"
+                  @click="onAddService(services)"
+                  ><i class="fas fa-plus"></i
+                ></b-button>
+                <b-button
+                  variant="outline-danger"
+                  v-show="checkShowMinusSign(indexS, services)"
+                  @click="onDeleteService(indexS, services)"
+                  ><i class="fas fa-minus"></i
+                ></b-button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2">FreeServices:</div>
+            <div class="col-10">
+              <div
+                v-for="(service, indexF) in freeServices"
+                :key="indexF"
+                class="w-100 d-flex mb-2"
+              >
+                <b-form-input
+                  v-model="freeServices[indexF]"
+                  placeholder="FreeServices of the hotel"
+                ></b-form-input>
+                <b-button
+                  variant="outline-primary"
+                  v-show="indexF === freeServices.length - 1"
+                  @click="onAddService(freeServices)"
+                  ><i class="fas fa-plus"></i
+                ></b-button>
+                <b-button
+                  variant="outline-danger"
+                  v-show="checkShowMinusSign(indexF, freeServices)"
+                  @click="onDeleteService(indexF, freeServices)"
+                  ><i class="fas fa-minus"></i
+                ></b-button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2">On Sale:</div>
+            <div class="col-10">
+              <b-form-checkbox
+                v-model="isSale"
+                placeholder="isSale of the hotel"
+                switch
+                required
+              ></b-form-checkbox>
+            </div>
+          </div>
+          <div class="text-center">
+            <b-button
+              type="submit"
+              variant="outline-primary"
+              class="mr-3"
+              :disabled="isDisableSave"
+              @click="onSave"
+              >{{ isEdit ? "Save" : "Create" }}</b-button
+            >
+            <b-button type="reset" variant="outline-warning" @click="onReset"
+              >Reset</b-button
+            >
+          </div>
+        </CCardBody>
+      </b-collapse>
     </CCard>
 
     <!-- List of rooms -->
@@ -185,6 +187,7 @@
           striped
           responsive="sm"
           show-empty
+          @row-dblclicked="(item) => onEditRoom(item.id)"
         >
           <template #cell(index)="data">
             {{ data.index + 1 }}
@@ -279,6 +282,9 @@
 
 <style lang="scss" scoped>
 .hotel {
+  .card-header {
+    cursor: pointer;
+  }
   .title {
     position: relative;
     h2 {
@@ -314,12 +320,13 @@ import Vue from "vue";
 import Popup from "../../services/popup";
 
 export default {
-  name: "Hotels",
+  name: "Hotel",
   data() {
     return {
       hotelService: new HotelService(),
       originDataHotel: null,
       isEdit: false,
+      isShowDetail: true,
       hotelId: 0,
 
       name: null,
@@ -340,7 +347,7 @@ export default {
         { key: "capacity", label: "Capacity", sortable: true },
         { key: "freeServices", label: "Free Services", sortable: true },
         { key: "srcImg", label: "Image", sortable: true },
-        { key: "actions", label: "" },
+        // { key: "actions", label: "" },
       ],
     };
   },
@@ -414,6 +421,10 @@ export default {
           this.originDataHotel && this.originDataHotel.rooms
             ? this.originDataHotel.rooms
             : [],
+        bookings:
+          this.originDataHotel && this.originDataHotel.bookings
+            ? this.originDataHotel.bookings
+            : [],
       };
     },
     async onSave() {
@@ -433,7 +444,7 @@ export default {
           variant: "success",
           solid: true,
         });
-        this.$router.push({ name: "Hotel", params: { id: newHotel.id } });
+        this.$router.replace({ name: "Hotel", params: { id: newHotel.id } });
       }
       this.$root["loading"] = false;
     },
@@ -444,7 +455,7 @@ export default {
         this.name = null;
         this.srcImg = null;
         this.srcDetailImgs = [""];
-        this.price = 0;
+        this.price = null;
         this.address = null;
         this.services = [""];
         this.freeServices = [""];
@@ -465,8 +476,9 @@ export default {
       }
       return isShow;
     },
-    backToList() {
-      this.$router.push({ name: "Hotels" });
+    back() {
+      this.$router.back();
+      //this.$router.push({ name: "Hotels" });
     },
     async onDeleteHotel() {
       const message = "Do you confirm to delete this hotel?";
@@ -482,7 +494,7 @@ export default {
           solid: true,
         });
         this.$root["loading"] = false;
-        this.backToList();
+        this.back();
       }
     },
     async onAddRoom() {
