@@ -32,10 +32,44 @@
           <button
             class="btn btn-outline-danger"
             v-if="status !== 'Cancel' && status !== 'Done'"
-            @click="onChangeStatus('Cancel')"
+            @click="$bvModal.show('modal-cancel')"
           >
             Cancel
           </button>
+          <!-- Modal to Cancel Order -->
+          <b-modal
+            id="modal-cancel"
+            header-bg-variant="danger"
+            header-text-variant="light"
+          >
+            <template #modal-header="">
+              <h5 class="w-100 text-center">Confirm Cancel Booking</h5>
+            </template>
+            <template #default="">
+              <div>Do you want to cancel this booking?</div>
+              <div>Reason:</div>
+              <b-form-textarea
+                v-model="reasonCancel"
+                placeholder="Why you cancel this booking?"
+              ></b-form-textarea>
+            </template>
+            <template #modal-footer="">
+              <div class="w-100 d-flex justify-content-center">
+                <b-button
+                  variant="secondary"
+                  class="mr-1"
+                  @click="$bvModal.hide('modal-cancel')"
+                  >No, thanks</b-button
+                >
+                <b-button
+                  variant="danger"
+                  @click="onCancelOrder"
+                  :disabled="!reasonCancel"
+                  >Cancel Order</b-button
+                >
+              </div>
+            </template>
+          </b-modal>
         </div>
       </CCardHeader>
       <b-collapse id="time-line" v-model="isShowTimeLine">
@@ -55,11 +89,17 @@
               </div>
             </div>
             <div class="timeline-status">
-              <div class="status-icon">
+              <div class="status-icon" :id="'status-icon-' + item.statusName">
                 <div class="status-name">
                   {{ item.statusName }}
                 </div>
               </div>
+              <b-tooltip
+                :target="'status-icon-' + item.statusName"
+                triggeres="hover"
+                v-if="item.description"
+                >Reason: {{ item.description }}</b-tooltip
+              >
               <div class="custom-line"></div>
             </div>
           </div>
@@ -76,6 +116,15 @@
       </CCardHeader>
       <b-collapse id="detail-booking" v-model="isShowDetailBooking">
         <CCardBody class="px-5">
+          <b-card
+            class="text-center"
+            v-if="bookingData && bookingData.status == 'Cancel' && cancelData"
+          >
+            <div class="bg-danger text-light font-weight-bold py-2">
+              This booking was cancel by {{ cancelData.userName }} with the
+              reason: {{ cancelData.description }}
+            </div>
+          </b-card>
           <div class="row mb-2">
             <div class="col-4 font-weight-bold pl-5">Name Customer</div>
             <div class="col-8">
@@ -318,7 +367,7 @@
           border-radius: #eb4641;
           border-color: #eb4641;
           &::before {
-            content: "\f12a";
+            content: "\f00d";
           }
         }
         .custom-line {
@@ -443,6 +492,7 @@ export default {
       bookingId: 0,
       bookingData: null,
       timelines: [],
+      reasonCancel: null,
     };
   },
   created() {
@@ -461,6 +511,9 @@ export default {
     status() {
       return this.bookingData ? this.bookingData.status : "Unknow";
     },
+    cancelData() {
+      return this.timelines.find((t) => t.statusName == StatusBooking.Cancel);
+    },
   },
   methods: {
     buildDataForTimeline(data) {
@@ -476,6 +529,7 @@ export default {
               statusDate: t.modifiedDate,
               statusName: t.status,
               userName: t.admin.userName,
+              description: t.description,
             };
           });
         } else {
@@ -547,9 +601,6 @@ export default {
           case StatusBooking.Done:
             this.bookingData.status = StatusBooking.Done;
             break;
-          case StatusBooking.Cancel:
-            this.bookingData.status = StatusBooking.Cancel;
-            break;
         }
         const newBookingData = await this.hotelService.changeStatusBooking(
           this.bookingData,
@@ -563,6 +614,22 @@ export default {
         this.$root["loading"] = false;
       }
     },
+    async onCancelOrder() {
+      this.$bvModal.hide("modal-cancel");
+      this.$root["loading"] = true;
+      this.bookingData.status = StatusBooking.Cancel;
+      this.bookingData.description = this.reasonCancel;
+      const newBookingData = await this.hotelService.changeStatusBooking(
+        this.bookingData,
+        this.$store.state.adminId
+      );
+      this.bookingData = newBookingData;
+      const timelineData = await this.hotelService.getTimelinesByBookingId(
+        this.bookingId
+      );
+      this.buildDataForTimeline(timelineData);
+      this.$root["loading"] = false;
+    },
     goToHotel(hotelId) {
       this.$router.push({ name: "Hotel", params: { id: hotelId } });
     },
@@ -572,10 +639,10 @@ export default {
         params: { hotelId: hotelId, roomId: roomId },
       });
     },
-    back(){
+    back() {
       this.$router.back();
       //this.$router.push({ name: 'Bookings' });
-    }
+    },
   },
 };
 </script>

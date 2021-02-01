@@ -79,7 +79,7 @@ function configRoutes () {
   return [
     {
       path: '/',
-      redirect: '/hotels',
+      redirect: '/bookings',
       name: 'Home',
       component: TheContainer,
       children: [

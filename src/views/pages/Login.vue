@@ -94,7 +94,7 @@ export default {
           this.$store.commit("set", ["isLogin", true]);
           this.$store.commit("set", ["userName", adminInfoArr[0].userName]);
           this.$store.commit("set", ["adminId", adminInfoArr[0].id]);
-          this.$router.push({ name: 'Hotels' });
+          this.$router.push({ name: 'Bookings' });
           return true;
         }
       }
