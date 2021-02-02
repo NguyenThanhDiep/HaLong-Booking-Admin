@@ -4,7 +4,7 @@ export default class Popup {
     static async confirmYesNo(message, vueComponent = new Vue(), options = null){
         const msgBox = {
             title: options?.title || 'Confirm',
-            headerClass: "justify-content-center text-center " + options?.headerClass,
+            headerClass: "bg-info text-light justify-content-center text-center " + options?.headerClass,
             centered: options?.centered || true,
             size: options ? options.size : "sm",
             bodyClass: "justify-content-center text-center",
@@ -34,7 +34,7 @@ export default class Popup {
     static async msgBoxOk(message, vueComponent = new Vue(), options = null) {
         const msgBox = {
             title: options?.title || 'Warning',
-            headerClass: "justify-content-center text-center " + options?.headerClass,
+            headerClass: "bg-warning justify-content-center text-center " + options?.headerClass,
             centered: options?.centered || true,
             bodyClass: "justify-content-center text-center",
             footerClass: "justify-content-center border-top-0 pt-0",

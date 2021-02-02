@@ -7,18 +7,18 @@
             <CCardBody class="p-4">
               <h1 class="text-center">Profile Info</h1>
               <b-card>
-                <div class="bg-info text-light p-3">
-                  <div class="mb-3"><b>User name:</b> admin</div>
-                  <div><b>Email:</b> nguyenthanhdiep21051995@gmail.com</div>
+                <div class="bg-success text-light p-3">
+                  <div class="mb-3"><b>User name:</b> {{ userName }}</div>
+                  <div><b>Email:</b> {{ email }}</div>
                 </div>
               </b-card>
-              <div class="d-flex justify-content-center">
-                <b-button variant="outline-primary" class="mr-3" @click="back"
-                  >Back</b-button
-                >
-                <b-button variant="outline-info" @click="onEditProfile"
-                  >Edit profile</b-button
-                >
+              <div class="row">
+                <button class="col-6 btn btn-secondary" @click="back">
+                  Back
+                </button>
+                <button class="col-6 btn btn-primary" @click="onEditProfile">
+                  Edit profile and change password
+                </button>
               </div>
             </CCardBody>
           </CCard>
@@ -49,9 +49,8 @@
                   v-model="email"
                 />
                 <CInput
-                  placeholder="Password"
+                  placeholder="New password"
                   type="password"
-                  autocomplete="new-password"
                   v-model="password"
                 >
                   <template #prepend-content
@@ -61,7 +60,6 @@
                 <CInput
                   placeholder="Repeat password"
                   type="password"
-                  autocomplete="new-password"
                   class="mb-4"
                   v-model="rePassword"
                 >
@@ -69,12 +67,18 @@
                     ><CIcon name="cil-lock-locked"
                   /></template>
                 </CInput>
-                <CRow class="d-flex justify-content-center">
-                  <CButton color="secondary" class="mr-3" @click="onCancelEdit"
-                    >Cancel</CButton
+                <div class="row">
+                  <button class="col-6 btn btn-secondary" @click="onCancelEdit">
+                    Cancel
+                  </button>
+                  <button
+                    class="col-6 btn btn-primary"
+                    @click="onSave"
+                    :disabled="isDisabledSave"
                   >
-                  <CButton color="primary">Save</CButton>
-                </CRow>
+                    Save
+                  </button>
+                </div>
               </CForm>
             </CCardBody>
           </CCard>
@@ -85,10 +89,14 @@
 </template>
 
 <script>
+import AdminService from "../../services/adminService";
+import Popup from "../../services/popup";
+
 export default {
   name: "Profile",
   data() {
     return {
+      adminService: new AdminService(),
       isEdit: false,
       id: 0,
       userName: "",
@@ -97,6 +105,17 @@ export default {
       email: "",
     };
   },
+  async mounted() {
+    this.$root["loading"] = true;
+    const adminData = await this.adminService.getAdminById(1);
+    if (adminData) {
+      this.id = adminData.id;
+      this.userName = adminData.userName;
+      this.email = adminData.email;
+      this.password = this.rePassword = adminData.password;
+    }
+    this.$root["loading"] = false;
+  },
   methods: {
     onEditProfile() {
       this.isEdit = true;
@@ -104,7 +123,48 @@ export default {
     onCancelEdit() {
       this.isEdit = false;
     },
-    back() {},
+    buildModelForAPI() {
+      return {
+        id: this.id,
+        userName: this.userName,
+        password: this.password,
+        email: this.email,
+      };
+    },
+    async onSave() {
+      if (this.rePassword !== this.password) {
+        await Popup.msgBoxOk("Two passwords have to be the same");
+        return false;
+      }
+      this.$root["loading"] = true;
+      const adminModel = this.buildModelForAPI();
+      const rs = await this.adminService.updateAdmin(adminModel);
+      if (rs) {
+        this.$bvToast.toast("Update admin successfully!", {
+          title: "Success",
+          variant: "success",
+          solid: true,
+        });
+      } else {
+        this.$bvToast.toast("An error occurs when updating admin!", {
+          title: "Error",
+          variant: "danger",
+          solid: true,
+        });
+      }
+      this.isEdit = false;
+      this.$root["loading"] = false;
+    },
+    back() {
+      this.$router.push({ name: 'Bookings' });
+    },
+  },
+  computed: {
+    isDisabledSave() {
+      return (
+        !this.userName || !this.email || !this.password || !this.rePassword
+      );
+    },
   },
 };
 </script>

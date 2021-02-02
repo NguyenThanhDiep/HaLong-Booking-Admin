@@ -15,7 +15,7 @@
         </div>
       </CHeaderNavLink>
     </template>
-    <CDropdownHeader tag="div" class="text-center" color="light">
+    <!-- <CDropdownHeader tag="div" class="text-center" color="light">
       <strong>Account</strong>
     </CDropdownHeader>
     <CDropdownItem>
@@ -40,11 +40,11 @@
       color="light"
     >
       <strong>Settings</strong>
-    </CDropdownHeader>
-    <CDropdownItem>
+    </CDropdownHeader> -->
+    <CDropdownItem @click="goToProfile">
       <CIcon name="cil-user" /> Profile
     </CDropdownItem>
-    <CDropdownItem>
+    <!-- <CDropdownItem>
       <CIcon name="cil-settings" /> Settings
     </CDropdownItem>
     <CDropdownItem>
@@ -58,7 +58,7 @@
     <CDropdownDivider/>
     <CDropdownItem>
       <CIcon name="cil-shield-alt" /> Lock Account
-    </CDropdownItem>
+    </CDropdownItem> -->
     <CDropdownItem @click="logout">
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>
@@ -74,6 +74,9 @@ export default {
     }
   },
   methods: {
+    goToProfile(){
+      this.$router.push({ name: 'Profile' });
+    },
     logout(){
       this.$store.commit("set", ["isLogin", false]);
       this.$store.commit("set", ["userName", null]);

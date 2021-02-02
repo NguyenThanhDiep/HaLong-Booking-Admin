@@ -500,11 +500,16 @@ export default {
   },
   async mounted() {
     this.$root["loading"] = true;
-    this.bookingData = await this.hotelService.getBookingById(this.bookingId);
-    const timelineData = await this.hotelService.getTimelinesByBookingId(
-      this.bookingId
-    );
-    this.buildDataForTimeline(timelineData);
+    const res = await this.hotelService.getBookingById(this.bookingId);
+    if (res) {
+      this.bookingData = res;
+      const timelineData = await this.hotelService.getTimelinesByBookingId(
+        this.bookingId
+      );
+      this.buildDataForTimeline(timelineData);
+    } else {
+      this.$router.replace({ name: "Page404" });
+    }
     this.$root["loading"] = false;
   },
   computed: {
@@ -597,20 +602,35 @@ export default {
         switch (status) {
           case StatusBooking.Processing:
             this.bookingData.status = StatusBooking.Processing;
+            this.bookingData.description = "";
             break;
           case StatusBooking.Done:
             this.bookingData.status = StatusBooking.Done;
+            this.bookingData.description = "";
             break;
         }
         const newBookingData = await this.hotelService.changeStatusBooking(
           this.bookingData,
           this.$store.state.adminId
         );
-        this.bookingData = newBookingData;
-        const timelineData = await this.hotelService.getTimelinesByBookingId(
-          this.bookingId
-        );
-        this.buildDataForTimeline(timelineData);
+        if (newBookingData) {
+          this.$bvToast.toast("Change status booking successfully!", {
+            title: "Success",
+            variant: "success",
+            solid: true,
+          });
+          this.bookingData = newBookingData;
+          const timelineData = await this.hotelService.getTimelinesByBookingId(
+            this.bookingId
+          );
+          this.buildDataForTimeline(timelineData);
+        } else {
+          this.$bvToast.toast("An error occurs!!!", {
+            title: "Error",
+            variant: "danger",
+            solid: true,
+          });
+        }
         this.$root["loading"] = false;
       }
     },
@@ -640,8 +660,8 @@ export default {
       });
     },
     back() {
-      this.$router.back();
-      //this.$router.push({ name: 'Bookings' });
+      //this.$router.back();
+      this.$router.push({ name: "Bookings" });
     },
   },
 };

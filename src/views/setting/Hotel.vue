@@ -389,6 +389,8 @@ export default {
       if (dataHotel) {
         this.originDataHotel = JSON.parse(JSON.stringify(dataHotel));
         this.mapDataFromAPI(dataHotel);
+      } else {
+        this.$router.replace({ name: "Page404" });
       }
     },
     mapDataFromAPI(data) {

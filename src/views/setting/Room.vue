@@ -165,8 +165,8 @@ export default {
       name: null,
       srcImg: null,
       price: null,
-      freeServices: [''],
-      capacities: [''],
+      freeServices: [""],
+      capacities: [""],
     };
   },
   created() {
@@ -205,6 +205,8 @@ export default {
       if (dataRoom) {
         this.originDataRoom = JSON.parse(JSON.stringify(dataRoom));
         this.mapDataFromAPI(dataRoom);
+      } else {
+        this.$router.replace({ name: "Page404" });
       }
     },
     mapDataFromAPI(data) {
@@ -267,7 +269,10 @@ export default {
             variant: "success",
             solid: true,
           });
-          this.$router.replace({ name: "Room", params: { hotelId: this.hotelId, roomId: newRoom.id } });
+          this.$router.replace({
+            name: "Room",
+            params: { hotelId: this.hotelId, roomId: newRoom.id },
+          });
         }
       }
       this.$root["loading"] = false;

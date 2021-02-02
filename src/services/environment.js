@@ -17,5 +17,6 @@ export const environment = {
         BaseUrlSuffix: "",
 
         AllAdmins: "admins/",
+        AdminById: "admins/{adminId}/",
     }
 };
