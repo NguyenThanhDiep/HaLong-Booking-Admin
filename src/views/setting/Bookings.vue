@@ -78,6 +78,7 @@ export default {
   components: { Table },
   async mounted() {
     this.loading = true;
+    this.tabActive = this.$store.state.tabBooking ? this.$store.state.tabBooking : 'New';
     await this.getBookingsByStatus(this.tabActive);
     this.loading = false;
   },
@@ -112,6 +113,7 @@ export default {
   methods: {
     onChangeTab(tab) {
       this.tabActive = tab;
+      this.$store.commit("set", ["tabBooking", tab]);
       this.originHeaderObject = {
         sort: { label: "", key: "", sort: "" },
         filters: [],

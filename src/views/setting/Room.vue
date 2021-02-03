@@ -32,7 +32,12 @@
             <b-form-input
               v-model="srcImg"
               placeholder="Url image of room"
+              :state="stateSrcImg"
+              aria-describedby="img-url-feedback"
             ></b-form-input>
+            <b-form-invalid-feedback id="img-url-feedback">
+              Please enter a valid url
+            </b-form-invalid-feedback>
           </div>
         </div>
         <div class="row">
@@ -152,6 +157,7 @@
 import HotelService from "../../services/hotelService";
 import Vue from "vue";
 import Popup from "../../services/popup";
+import { IsValidUrl } from "../../services/common";
 
 export default {
   name: "Room",
@@ -193,10 +199,16 @@ export default {
       return (
         !this.name ||
         !this.srcImg ||
+        this.stateSrcImg === false ||
         !this.price ||
         this.freeServices.filter((val) => val !== "").length == 0 ||
         this.capacities.filter((val) => val !== "").length == 0
       );
+    },
+    stateSrcImg() {
+      return this.srcImg && this.srcImg.length > 0 && !IsValidUrl(this.srcImg)
+        ? false
+        : null;
     },
   },
   methods: {
@@ -242,7 +254,7 @@ export default {
     },
     onReset() {
       if (this.isEdit) {
-        this.mapDataFromAPI(this.originDataHotel);
+        this.mapDataFromAPI(this.originDataRoom);
       } else {
         this.name = null;
         this.srcImg = null;
@@ -279,7 +291,11 @@ export default {
     },
     async onDeleteRoom() {
       const message = "Do you confirm to delete this room?";
-      const confirm = await Popup.confirmYesNo(message);
+      const confirm = await Popup.confirmYesNo(message, new Vue(), {
+        headerClass: "bg-danger text-light",
+        okTitle: "Delete",
+        okVariant: "btn btn-danger",
+      });
       if (confirm) {
         this.$root["loading"] = true;
         await this.hotelService.deleteRoom(this.roomId);

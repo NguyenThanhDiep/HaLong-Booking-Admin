@@ -4,12 +4,12 @@ export default class Popup {
     static async confirmYesNo(message, vueComponent = new Vue(), options = null){
         const msgBox = {
             title: options?.title || 'Confirm',
-            headerClass: "bg-info text-light justify-content-center text-center " + options?.headerClass,
+            headerClass: "justify-content-center text-center " + (options?.headerClass ? options?.headerClass : 'bg-info text-light'),
             centered: options?.centered || true,
             size: options ? options.size : "sm",
             bodyClass: "justify-content-center text-center",
             okTitle: options ? options.okTitle : 'Yes',
-            okVariant: options ? options.okVariant :  "btn btn-primary btnOk",
+            okVariant: options ? options.okVariant : "btn btn-primary btnOk",
             cancelTitle: options ? options.cancelTitle : 'Cancel',
             cancelVariant: options ? options.cancelVariant :  "btn btn-secondary",
             footerClass:  options?.footerClass || "justify-content-center border-top-0 pt-0",

@@ -33,7 +33,12 @@
               <b-form-input
                 v-model="srcImg"
                 placeholder="Url image of the hotel"
+                :state="stateBgImg"
+                aria-describedby="bg-img-url-feedback"
               ></b-form-input>
+              <b-form-invalid-feedback id="bg-img-url-feedback">
+                Please enter a valid url
+              </b-form-invalid-feedback>
             </div>
           </div>
           <div class="row">
@@ -42,24 +47,36 @@
               <div
                 v-for="(img, indexI) in srcDetailImgs"
                 :key="indexI"
-                class="w-100 d-flex mb-2"
+                class="w-100 d-flex flex-column mb-2"
               >
-                <b-form-input
-                  v-model="srcDetailImgs[indexI]"
-                  placeholder="Url Image of the hotel"
-                ></b-form-input>
-                <b-button
-                  variant="outline-primary"
-                  v-show="indexI === srcDetailImgs.length - 1"
-                  @click="onAddService(srcDetailImgs)"
-                  ><i class="fas fa-plus"></i
-                ></b-button>
-                <b-button
-                  variant="outline-danger"
-                  v-show="checkShowMinusSign(indexI, srcDetailImgs)"
-                  @click="onDeleteService(indexI, srcDetailImgs)"
-                  ><i class="fas fa-minus"></i
-                ></b-button>
+                <div class="w-100 d-flex">
+                  <b-form-input
+                    v-model="srcDetailImgs[indexI]"
+                    placeholder="Url Image of the hotel"
+                    :state="stateDetailImgs[indexI]"
+                    :aria-describedby="'detail-img-url-feedback-' + indexI"
+                  ></b-form-input>
+                  <b-button
+                    variant="outline-primary"
+                    v-show="indexI === srcDetailImgs.length - 1"
+                    @click="onAddService(srcDetailImgs)"
+                    ><i class="fas fa-plus"></i
+                  ></b-button>
+                  <b-button
+                    variant="outline-danger"
+                    v-show="checkShowMinusSign(indexI, srcDetailImgs)"
+                    @click="onDeleteService(indexI, srcDetailImgs)"
+                    ><i class="fas fa-minus"></i
+                  ></b-button>
+                </div>
+                <div
+                  :class="[
+                    'invalid-feedback',
+                    stateDetailImgs[indexI] === false ? 'd-block' : '',
+                  ]"
+                >
+                  Please enter a valid url
+                </div>
               </div>
             </div>
           </div>
@@ -238,45 +255,6 @@
         </b-table>
       </CCardBody>
     </CCard>
-
-    <!-- <b-form @submit="onSave" @reset="onReset" v-if="isShowForm">
-            <div class="mb-3">
-                <div class="mb-2">Name: </div>
-                <b-form-input v-model="name" placeholder="Name of the hotel" required></b-form-input>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">Image: </div>
-                <b-form-file v-model="srcImg" placeholder="Choose a file or drop it here..." drop-placeholder="Drop file here..." accept=".jpg, .png" required></b-form-file>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">Price: </div>
-                <b-form-input v-model="price" type="number" placeholder="Price of the hotel" required></b-form-input>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">Address: </div>
-                <b-form-input v-model="address" placeholder="Address of the hotel" required></b-form-input>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">Star: </div>
-                <b-form-rating v-model="star" variant="warning"></b-form-rating>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">Services: </div>
-                <b-form-input v-model="services" placeholder="services of the hotel" required></b-form-input>
-            </div>
-            <div class="mb-3">
-                <div class="mb-2">FreeServices: </div>
-                <b-form-input v-model="freeServices" placeholder="freeServices of the hotel" required></b-form-input>
-            </div>
-            <div class="mb-3 d-flex">
-                <div class="mr-3">On Sale: </div>
-                <b-form-checkbox v-model="isSale" placeholder="isSale of the hotel" switch required></b-form-checkbox>
-            </div>
-            <div class="text-center">
-                <b-button type="submit" variant="primary" class="mr-3">Save</b-button>
-                <b-button type="reset" variant="danger">Reset</b-button>
-            </div>
-        </b-form> -->
   </div>
 </template>
 
@@ -318,6 +296,7 @@
 import HotelService from "../../services/hotelService";
 import Vue from "vue";
 import Popup from "../../services/popup";
+import { IsValidUrl } from "../../services/common";
 
 export default {
   name: "Hotel",
@@ -372,13 +351,25 @@ export default {
       return (
         !this.name ||
         !this.srcImg ||
+        this.stateBgImg === false ||
         !this.price ||
         !this.star ||
         !this.address ||
         this.freeServices.filter((val) => val !== "").length == 0 ||
         this.services.filter((val) => val !== "").length == 0 ||
-        this.srcDetailImgs.filter((val) => val !== "").length == 0
+        this.srcDetailImgs.filter((val) => val !== "").length == 0 ||
+        this.stateDetailImgs.some((state) => state === false)
       );
+    },
+    stateBgImg() {
+      return this.srcImg && this.srcImg.length > 0 && !IsValidUrl(this.srcImg)
+        ? false
+        : null;
+    },
+    stateDetailImgs() {
+      return this.srcDetailImgs.map((src) => {
+        return src && src.length > 0 && !IsValidUrl(src) ? false : null;
+      });
     },
   },
   methods: {
@@ -484,7 +475,11 @@ export default {
     },
     async onDeleteHotel() {
       const message = "Do you confirm to delete this hotel?";
-      const confirm = await Popup.confirmYesNo(message);
+      const confirm = await Popup.confirmYesNo(message, new Vue(), {
+        headerClass: "bg-danger text-light",
+        okTitle: "Delete",
+        okVariant: "btn btn-danger",
+      });
       if (confirm) {
         this.$root["loading"] = true;
         if (this.hotelId) {
@@ -513,7 +508,11 @@ export default {
     },
     async onDeleteRoom(roomId) {
       const message = "Do you confirm to delete this room?";
-      const confirm = await Popup.confirmYesNo(message);
+      const confirm = await Popup.confirmYesNo(message, new Vue(), {
+        headerClass: "bg-danger text-light",
+        okTitle: "Delete",
+        okVariant: "btn btn-danger",
+      });
       if (confirm) {
         this.$root["loading"] = true;
         if (roomId) {
