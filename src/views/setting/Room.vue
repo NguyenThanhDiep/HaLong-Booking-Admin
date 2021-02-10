@@ -305,8 +305,8 @@ export default {
           solid: true,
         });
         this.$root["loading"] = false;
+        this.back();
       }
-      this.back();
     },
     back() {
       this.$router.back();
